@@ -1,0 +1,30 @@
+digraph {
+    rankdir=LR;
+    node [shape=octagon, margin=0.1]
+
+    S00 -> S1[label="in1",weight="0.4"];
+    S00 -> S2[label="in2",weight="0.4"];
+    S00 -> S00[label="in5",weight="0.1",style=bold,color=blue];
+    
+    S1 -> S2[label="in1",weight="0.4"];
+    S1 -> S3[label="in2",weight="0.4"];
+    S1 -> S01[label="in5/out1",weight="0.1",style=bold,color=blue];
+
+    S2 -> S3[label="in1",weight="0.6"];
+    S2 -> S4[label="in2",weight="0.6"];
+    S2 -> S02[label="in5/out2",weight="0.1",style=bold,color=blue];
+
+    S3 -> S4[label="in1",weight="0.4"];
+    S3 -> S03[label="in2",weight="0.1"];
+    S3 -> S03[label="in5/out1&2",weight="0.1",style=bold,color=blue];
+
+    S4 -> S04[label="in1",weight="0.1",style=bold,color=blue];
+    S4 -> S04[label="in2/out1",weight="0.1",style=bold,color=blue];
+    S4 -> S04[label="in5/out2x2",weight="0.1",style=bold,color=blue];
+
+    S00[label="S0"]
+    S01[label="S0"]
+    S02[label="S0"]
+    S03[label="S0"]
+    S04[label="S0"]
+}
