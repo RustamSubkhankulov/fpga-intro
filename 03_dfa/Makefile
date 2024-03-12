@@ -3,7 +3,7 @@ all: help
 test: dfa.executable
 	./dfa.executable
 
-clock-div.executable: testbench.v dfa.v
+dfa.executable: testbench.v dfa.v
 	iverilog $^ -o $@
 
 clean:
