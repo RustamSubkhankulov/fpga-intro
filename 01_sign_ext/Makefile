@@ -7,7 +7,8 @@ sign-ext.executable: testbench.v sign_ext.v sign_ext2.v neg.v
 	iverilog $^ -o $@
 
 clean:
-	rm -f sign-ext.executable
+	- rm sign-ext.executable
+	- rm dump.vcd
 
 help:
 	@echo "  test  - Run testbench"

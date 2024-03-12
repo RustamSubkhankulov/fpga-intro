@@ -20,6 +20,7 @@ repeater repeater(.in(clk), .out(clk1));
 /* For output of invertor module */
 wire clk2;
 
+/* Invertor module instance */
 invertor invertor(.in(clk1), .out(clk2)); 
 
 initial begin

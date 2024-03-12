@@ -7,7 +7,8 @@ invertor.executable: testbench.v repeater.v invertor.v
 	iverilog $^ -o $@
 
 clean:
-	rm -f invertor.executable
+	- rm invertor.executable
+	- rm dump.vcd
 
 help:
 	@echo "  test  - Run testbench"
