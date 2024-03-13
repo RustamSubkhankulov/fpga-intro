@@ -33,6 +33,86 @@ initial begin
     /* Write to console */
     $display("Test started...");
 
+    /* S0 -> S1 */
+    #0.5 in1 = 1;
+    #1 in1 = 0;
+
+    /* S1 -> S2 */
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S2 -> S3 */
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S3 -> S4 */
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S4 -> S0, soda */
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S0 -> S2 */
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S3 -> S0, soda */
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S0 -> S0, soda */
+    #1 in5 = 1;
+    #1 in5 = 0;
+
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S1 -> S3 */
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S3 -> S0, soda, out1&2 */
+    #1 in5 = 1;
+    #1 in5 = 0;
+
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S2 -> S4 */
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S4 -> S0, soda, out1 */
+    #1 in2 = 1;
+    #1 in2 = 0; 
+
+    #1 in2 = 1;
+    #1 in2 = 0;
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S4 -> S0, soda, out2x2 */
+    #1 in5 = 1;
+    #1 in5 = 0;
+
+    #1 in2 = 1;
+    #1 in2 = 0;
+
+    /* S2 -> S0, soda, out2 */
+    #1 in5 = 1;
+    #1 in5 = 0;
+
+    #1 in1 = 1;
+    #1 in1 = 0;
+
+    /* S1 -> S0, soda, out1*/
+    #1 in5 = 1;
+    #1 in5 = 0;
+
     /* Stop simulation after 10ns */
     #10 $finish;
 end

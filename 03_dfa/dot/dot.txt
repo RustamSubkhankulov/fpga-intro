@@ -15,7 +15,7 @@ digraph {
     S2 -> S02[label="in5/out2",weight="0.1",style=bold,color=blue];
 
     S3 -> S4[label="in1",weight="0.4"];
-    S3 -> S03[label="in2",weight="0.1"];
+    S3 -> S03[label="in2",weight="0.1",style=bold,color=blue];
     S3 -> S03[label="in5/out1&2",weight="0.1",style=bold,color=blue];
 
     S4 -> S04[label="in1",weight="0.1",style=bold,color=blue];
