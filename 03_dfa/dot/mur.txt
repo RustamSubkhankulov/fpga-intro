@@ -1,0 +1,72 @@
+digraph {
+    node [shape=octagon, margin=0.1]
+
+    S00 -> S1[label="in1",weight="0.4"];
+    S00 -> S2[label="in2",weight="0.4"];
+    S00 -> S5[label="in5",weight="0.1",style=bold,color=blue];
+
+    S1 -> S2[label="in1",weight="0.4"];
+    S1 -> S3[label="in2",weight="0.4"];
+    S1 -> S6[label="in5/out1",weight="0.1",style=bold,color=blue];
+
+    S2 -> S3[label="in1",weight="0.6"];
+    S2 -> S4[label="in2",weight="0.6"];
+    S2 -> S7[label="in5/out2",weight="0.1",style=bold,color=blue];
+
+    S3 -> S4[label="in1",weight="0.4"];
+    S3 -> S5[label="in2",weight="0.1",style=bold,color=blue];
+    S3 -> S8[label="in5/out1&2",weight="0.1",style=bold,color=blue];
+
+    S4 -> S5[label="in1",weight="0.1",style=bold,color=blue];
+    S4 -> S6[label="in2/out1",weight="0.1",style=bold,color=blue];
+    S4 -> S9[label="in5/out2x2",weight="0.1",style=bold,color=blue];
+
+    S5 -> S51[label="in1",weight="0.4"];
+    S5 -> S52[label="in2",weight="0.4"];
+    S5 -> S55[label="in5",weight="0.1",style=bold,color=blue];
+
+    S6 -> S61[label="in1",weight="0.4"];
+    S6 -> S62[label="in2",weight="0.4"];
+    S6 -> S65[label="in5",weight="0.1",style=bold,color=blue];
+
+    S7 -> S71[label="in1",weight="0.4"];
+    S7 -> S72[label="in2",weight="0.4"];
+    S7 -> S75[label="in5",weight="0.1",style=bold,color=blue];
+
+    S8 -> S81[label="in1",weight="0.4"];
+    S8 -> S82[label="in2",weight="0.4"];
+    S8 -> S85[label="in5",weight="0.1",style=bold,color=blue];
+
+    S9 -> S91[label="in1",weight="0.4"];
+    S9 -> S92[label="in2",weight="0.4"];
+    S9 -> S95[label="in5",weight="0.1",style=bold,color=blue];
+
+    S5[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S55[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S65[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S75[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S85[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S95[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S6[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S7[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S8[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+    S9[style="filled",fillcolor="#4706c9",fontcolor="#ffffff"]
+
+    S51[label="S1"]
+    S61[label="S1"]
+    S71[label="S1"]
+    S81[label="S1"]
+    S91[label="S1"]
+
+    S52[label="S2"]
+    S62[label="S2"]
+    S72[label="S2"]
+    S82[label="S2"]
+    S92[label="S2"]
+
+    S55[label="S5"]
+    S65[label="S5"]
+    S75[label="S5"]
+    S85[label="S5"]
+    S95[label="S5"]
+}
