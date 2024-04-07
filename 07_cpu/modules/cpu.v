@@ -15,7 +15,7 @@ wire [31:0]instr_data;
  * Reads and returns current instruction 'instruction_data'
  * from address 'instruction_addr'
  */
-rom #(.ADDR_WIDTH(3), .DATA_WIDTH(32)) rom(
+rom #(.ADDR_WIDTH(7), .DATA_WIDTH(32)) rom(
     .clk(clk), 
     .addr(instr_addr[2:0]), 
     .q(instr_data)
@@ -29,7 +29,7 @@ rom #(.ADDR_WIDTH(3), .DATA_WIDTH(32)) rom(
  */
 core core(
     .clk(clk),
-    .instr_data(instr_data), .last_pc(32'h7),
+    .instr_data(instr_data), .last_pc(2**7-1),
     .instr_addr(instr_addr)
 );
 

@@ -14,7 +14,7 @@ module core(
 );
 
 /* Current instruction */
-wire [31:0]instr = instr_data;
+reg [31:0]instr = 32'h13; // NOP initially
 
 /* Program counter register */
 reg [31:0]pc = 32'hFFFFFFFF;
@@ -22,11 +22,19 @@ reg [31:0]pc = 32'hFFFFFFFF;
 /* Next program counter value */
 wire [31:0]pc_next = (pc == last_pc) ? pc : pc + 1;
 
+/* Halt signal to stop the processor */
+wire halt;
+
 always @(posedge clk) begin
     
     /* Step to next instruction */
-    pc <= pc_next;
-    $strobe("CPUv1: [%h] %h \n", pc, instr);
+    if (!halt) begin
+        pc = pc_next;
+        instr = instr_data;
+    end else
+        instr = 32'h13;
+
+    // $strobe("CPUv1: [%h] %h \n", pc, instr);
 
 end
 
@@ -75,7 +83,8 @@ control control(
     .imm12(imm12),
     .rf_we(rf_we),
     .alu_imm(alu_imm), .alu_funct3(alu_funct3), .alu_funct7(alu_funct7),
-    .mem_we(mem_we), .mem_access_width(mem_access_width)
+    .mem_we(mem_we), .mem_access_width(mem_access_width),
+    .halt(halt)
 );
 
 /* Sign-extended immidiate value */

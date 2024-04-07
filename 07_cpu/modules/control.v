@@ -20,7 +20,10 @@ module control(
     output reg mem_we,
 
     /* Access width for memory control unit */
-    output wire [1:0]mem_access_width
+    output wire [1:0]mem_access_width,
+
+    /* Halt, stop processor (ebreak opcode actually) */
+    output reg halt
 );
 
 /* Extract fields from instruction code */
@@ -29,10 +32,16 @@ wire [6:0]opcode = instr[6:0];
 /* Access width for store instructions */
 assign mem_access_width = instr[13:12];
 
+initial begin
+    halt = 1'b0;
+end
+
 always @(*) begin
     
-    imm12  = 12'b0;    
+    rf_we  = 1'b0;
     mem_we = 1'b0;
+    
+    imm12  = 12'b0;    
     alu_funct3 <= instr[14:12];
     alu_funct7 <= instr[31:25];
 
@@ -53,12 +62,16 @@ always @(*) begin
 
         /* S-type */
         7'b0100011: begin
-            rf_we = 1'b0;
             imm12 = {instr[31:25],instr[11:7]};
             alu_imm = 1'b1;
             mem_we  = 1'b1;
             alu_funct3 <= 3'b0; // ADDI to ALU
             alu_funct7 <= 7'b0;
+        end
+
+        /* ebreak */
+        7'b1110011: begin
+            halt = 1'b1;
         end
 
         default: ;
