@@ -63,8 +63,9 @@ wire alu_imm;
 /* 12-bit wide immediate from instruction encoding */
 wire [11:0]imm12;
 
-/* 3-bit wide alu operaion encoding */
-wire [2:0]alu_op;
+/* ALU operaion encoding */
+wire [2:0]alu_funct3;
+wire [6:0]alu_funct7;
 
 /* 
  * Control unit 
@@ -77,7 +78,7 @@ control control(
     .instr(instr),
     .imm12(imm12),
     .rf_we(rf_we),
-    .alu_imm(alu_imm), .alu_op(alu_op)
+    .alu_imm(alu_imm), .alu_funct3(alu_funct3), .alu_funct7(alu_funct7)
 );
 
 /* Sign-extended immidiate value */
@@ -94,7 +95,7 @@ alu alu(
     .reg_source1(rf_rdata0), .reg_source2(rf_rdata1),
     .imm_source(imm32),
     .imm(alu_imm),
-    .oper(alu_op),
+    .funct3(alu_funct3), .funct7(alu_funct7),
     .res(alu_result)
 );
 

@@ -12,35 +12,31 @@ module control(
     /* ALU immediate source operand flag */
     output reg alu_imm,
     
-    /* ALU operation code */
-    output reg [2:0]alu_op
+    /* ALU operation codes */
+    output reg [2:0]alu_funct3,
+    output reg [6:0]alu_funct7
 );
 
 
 /* Extract fields from instruction code */
 wire [6:0]opcode = instr[6:0];
-wire [2:0]funct3 = instr[14:12];
 
 always @(*) begin
     
-    /* Zero at the start of each clock cycle */
-    rf_we   = 1'b0;
-    imm12   = 12'b0;
-    alu_op  = 3'b0;
-    alu_imm = 1'b0;    
+    /* funct3 and funct7 fiels for ALU */
+    alu_funct3 <= instr[14:12];
+    alu_funct7 <= instr[31:25];    
 
     case (opcode)
 
         7'b0010011: begin
             rf_we   = 1'b1;
             imm12   = instr[31:20];
-            alu_op  = funct3;
             alu_imm = 1'b1;
         end
 
         7'b0110011: begin
             rf_we = 1'b1;
-            alu_op  = funct3;
             alu_imm = 1'b0;
         end
 
