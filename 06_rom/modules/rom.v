@@ -16,7 +16,7 @@ reg [DATA_WIDTH - 1:0]mem[2**ADDR_WIDTH - 1:0];
 initial begin
 
     /* Initialize memory with file contents */
-    $readmemh("rom_contents.txt", mem);
+    $readmemh("misc/rom_contents.txt", mem);
 
 end
 
