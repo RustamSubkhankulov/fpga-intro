@@ -19,7 +19,8 @@ $(BUILD_DIR):
 	- mkdir build
 
 %.txt: %.bin
-	hexdump -v -e '"%08x\n"' $(^) > $(@)
+	$(call check_defined, DEST, destination file)
+	hexdump -v -e '"%08x\n"' $(^) > $(DEST)
 
 %.bin: %.out
 	$(OBJCOPY) -O binary $(^) $(@)
@@ -40,3 +41,10 @@ help:
 	@echo "  rom   - Generate text file with ROM contents"
 	@echo "  clean - Remove generated files"
 	@echo "  help  - Display this text"
+
+check_defined = \
+    $(strip $(foreach 1,$1, \
+        $(call __check_defined,$1,$(strip $(value 2)))))
+__check_defined = \
+    $(if $(value $1),, \
+      $(error Undefined $1$(if $2, ($2))))

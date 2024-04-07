@@ -2,7 +2,7 @@ all: help
 
 MODULES_DIR = modules
 BUILD_DIR = build
-PROJECT = romfetch
+PROJECT = cpu
 
 EXECUTABLE = $(BUILD_DIR)/$(PROJECT).executable
 

@@ -57,6 +57,9 @@ wire [4:0]rf_waddr = rd;
 /* Write enable signal for register file */
 wire rf_we;
 
+/* ALU immediate source operand flag */
+wire alu_imm;
+
 /* 12-bit wide immediate from instruction encoding */
 wire [11:0]imm12;
 
@@ -74,7 +77,7 @@ control control(
     .instr(instr),
     .imm12(imm12),
     .rf_we(rf_we),
-    .alu_op(alu_op)
+    .alu_imm(alu_imm), .alu_op(alu_op)
 );
 
 /* Sign-extended immidiate value */
@@ -86,12 +89,11 @@ sign_ext sign_ext(.imm(imm12), .ext_imm(imm32));
 /* ALU result */
 wire [31:0]alu_result;
 
-wire [31:0]alu_source1 = rf_rdata0;
-wire [31:0]alu_source2 = imm32;
-
 /* ALU */
 alu alu(
-    .source1(alu_source1), .source2(alu_source2),
+    .reg_source1(rf_rdata0), .reg_source2(rf_rdata1),
+    .imm_source(imm32),
+    .imm(alu_imm),
     .oper(alu_op),
     .res(alu_result)
 );

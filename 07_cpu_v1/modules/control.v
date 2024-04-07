@@ -8,6 +8,9 @@ module control(
     
     /* Register file Write Enable */
     output reg rf_we,
+
+    /* ALU immediate source operand flag */
+    output reg alu_imm,
     
     /* ALU operation code */
     output reg [2:0]alu_op
@@ -21,16 +24,24 @@ wire [2:0]funct3 = instr[14:12];
 always @(*) begin
     
     /* Zero at the start of each clock cycle */
-    rf_we  = 1'b0;
-    alu_op = 3'b0;
-    imm12  = 12'b0;
+    rf_we   = 1'b0;
+    imm12   = 12'b0;
+    alu_op  = 3'b0;
+    alu_imm = 1'b0;    
 
     case (opcode)
 
         7'b0010011: begin
+            rf_we   = 1'b1;
+            imm12   = instr[31:20];
+            alu_op  = funct3;
+            alu_imm = 1'b1;
+        end
+
+        7'b0110011: begin
             rf_we = 1'b1;
-            imm12 = instr[31:20];
-            alu_op = funct3;
+            alu_op  = funct3;
+            alu_imm = 1'b0;
         end
 
         default: ;
