@@ -2,9 +2,9 @@
 
 #### Список лабораторных работ:
 
-1. Модель процессора архитектуры RISC-V c поддержкой арифметических инструкций и использованием ROM (07)
-2. Модуль ROM-памяти, инициализируемый содержимым из файла (06).
-3. Детерменированный конечный автомат, описывающий поведение вендингового автомата с напитками (03)
-4. Делитель частоты (02)
-5. Знаковое расширение константы (01)
-6. Инвертор (00)
+1. [Модель процессора архитектуры RISC-V c поддержкой арифметических инструкций и использованием ROM](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/07_cpu_v1)
+2. [Модуль ROM-памяти, инициализируемый содержимым из файла](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/06_rom)
+3. [Детерменированный конечный автомат, описывающий поведение вендингового автомата с напитками](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/03_dfa)
+4. [Делитель частоты](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/02_clock_div)
+5. [Знаковое расширение константы](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/01_sign_ext)
+6. [Инвертор](https://github.com/RustamSubkhankulov/fpga-intro/tree/main/00_invertor)
