@@ -3,7 +3,7 @@
 module testbench();
 
 /* Represents clock, initial value is 0 */
-reg clk = 1'b1;
+reg clk = 1'b0;
 
 always begin
 
@@ -12,11 +12,8 @@ always begin
 
 end
 
-/* Wire for divided clock signal from clk_div module */
-wire clk_divided;
-
-/* Clock divider */
-clk_div #(.X(8)) clk_div(.clk(clk), .clk_divided(clk_divided));
+/* CPU */
+cpu cpu(.clk(clk));
 
 initial begin
     
@@ -27,7 +24,7 @@ initial begin
     $display("Test started...");
     
     /* Stop simulation after 64ns */
-    #64 $finish;
+    #16 $finish;
 
 end
 
