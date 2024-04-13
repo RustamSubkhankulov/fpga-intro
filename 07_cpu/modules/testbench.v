@@ -24,7 +24,7 @@ initial begin
     $display("Test started...");
     
     /* Stop simulation after 64ns */
-    #256 $finish;
+    #1024 $finish;
 
 end
 

@@ -11,7 +11,7 @@ module mem_ctl(
     /* Write-enable control signal */
     input wire we,
 
-    /**/
+    /* Memory access width */
     input wire [1:0]access_width
 );
 

@@ -2,34 +2,38 @@ RISCV_PREFIX = riscv64-linux-gnu-
 
 AS      = $(RISCV_PREFIX)as
 LD      = $(RISCV_PREFIX)ld
+GCC     = $(RISCV_PREFIX)gcc
 OBJCOPY = $(RISCV_PREFIX)objcopy
 OBJDUMP = $(RISCV_PREFIX)objdump
 
 SRC_DIR   = src
 BUILD_DIR = build
 
-SRCS=$(wildcard $(SRC_DIR)/*.S)
-TXTS=$(SRCS:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.txt)
+SRCS=$(wildcard $(SRC_DIR)/*)
+OBJS=$(SRCS:$(SRC_DIR)/%=$(BUILD_DIR)/%.o)
 
 all: help
 
-rom: $(BUILD_DIR) $(TXTS)
+rom: $(BUILD_DIR) $(DEST)
+	$(call check_defined, DEST, destination file)
 
 $(BUILD_DIR):
 	- mkdir build
 
-%.txt: %.bin
-	$(call check_defined, DEST, destination file)
-	hexdump -v -e '"%08x\n"' $(^) > $(DEST)
+$(DEST): $(BUILD_DIR)/$(addsuffix .bin, $(basename $(notdir $(DEST))))
+	hexdump -v -e '"%08x\n"' $(^) > $(@)
 
 %.bin: %.out
 	$(OBJCOPY) -O binary $(^) $(@)
 
-%.out: %.o
-	$(LD) -melf32lriscv $(^) -o $(@) && $(OBJDUMP) -d $(@)
+%.out: $(OBJS)
+	$(LD) -Ttext=0x1000 -melf32lriscv $(^) -o $(@) && $(OBJDUMP) -d $(@)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.S
+$(BUILD_DIR)/%.S.o: $(SRC_DIR)/%.S
 	$(AS) -march=rv32i -mabi=ilp32 -c $(^) -o $(@)
+
+$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
+	$(GCC) -nostdlib -fomit-frame-pointer -O0 -march=rv32i -mabi=ilp32 -c $(^) -o $(@)
 
 .PHONY: clean
 .PRECIOUS: $(BUILD_DIR)/%.o %.out %.bin
