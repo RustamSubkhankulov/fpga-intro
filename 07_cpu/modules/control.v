@@ -32,7 +32,10 @@ module control(
     output reg branch_taken,
 
     /* Current instruction is jump */
-    output reg jump
+    output reg jump,
+
+    /* Current instruction is jump register */
+    output reg jump_reg
 );
 
 /* Extract fields from instruction code */
@@ -47,14 +50,16 @@ end
 
 wire [2:0]funct3 = instr[14:12];
 
-always @(*) begin
+always @(instr) begin
     
     rf_we        = 1'b0;
     mem_we       = 1'b0;
+
     jump         = 1'b0;
+    jump_reg     = 1'b0;
     branch_taken = 1'b0;
     
-    imm12  = 12'b0;    
+    imm12      = 12'b0;    
     alu_funct3 = instr[14:12];
     alu_funct7 = instr[31:25];
 
@@ -102,16 +107,16 @@ always @(*) begin
 
         7'b1101111: begin // JAL
             imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0};
-            rf_we = 1'b1;
+            rf_we   = 1'b1;
             alu_imm = 1'b0;
-            jump  = 1'b1;
+            jump    = 1'b1;
         end
 
         7'b1100111: begin // JALR
             imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0}; 
-            rf_we = 1'b1;
-            alu_imm = 1'b0;
-            jump  = 1'b1;
+            rf_we    = 1'b1;
+            alu_imm  = 1'b0;
+            jump_reg = 1'b1;
         end
 
         /* ebreak */

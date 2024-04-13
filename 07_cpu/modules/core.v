@@ -14,16 +14,27 @@ module core(
 );
 
 /* Current instruction */
-reg [31:0]instr = 32'h13; // NOP initially
+wire [31:0]instr = instr_data;
 
 /* Program counter register */
-reg [31:0]pc = 32'hFFFFFFFF;
+reg [31:0]pc = 32'h0;
 
 /* Current branch is taken */
 wire branch_taken;
 
+/* Branch target */
+wire [31:0]branch_target = pc + imm32_div_4;
+
+/* Jump target */
+wire [31:0]jump_target = pc + imm32_div_4;
+
+/* Jump register target */
+wire [31:0]jump_reg_target = rf_rdata0 + imm32_div_4;
+
 /* Branch target address */
-reg [31:0]pc_target = 0;
+wire [31:0]pc_target = (branch_taken)? branch_target : 
+                       (jump)? jump_target : 
+                       (jump_reg)? jump_reg_target : pc + 1;
 
 /* Next program counter value */
 wire [31:0]pc_next = (pc == last_pc) ? pc : pc_target;
@@ -32,28 +43,11 @@ wire [31:0]pc_next = (pc == last_pc) ? pc : pc_target;
 wire halt;
 
 always @(posedge clk) begin
-    
-    if (branch_taken) 
-        pc_target = pc + (imm32 >> 2);
-
-    else if (jump) begin
-        if (alu_funct3 == 0) begin
-            pc_target = (rf_rdata0 + imm32) >> 2;
-        end 
-        else begin
-            pc_target = pc + (imm32 >> 2);
-        end
-    end 
-    else begin
-        pc_target = pc + 1;
-    end
 
     /* Step to next instruction */
     if (!halt) begin
         pc = pc_next;
-        instr = instr_data;
-    end else
-        instr = 32'h13; // NOP
+    end
 
     // $strobe("CPUv1: [%h] %h \n", pc, instr);
 
@@ -95,6 +89,9 @@ wire [1:0]mem_access_width;
 /* Current instruction is jump */
 wire jump;
 
+/* Current instruction is jump register */
+wire jump_reg;
+
 /* 
  * Control unit 
  * Based on current instruction,
@@ -111,11 +108,15 @@ control control(
     .mem_we(mem_we), .mem_access_width(mem_access_width),
     .halt(halt),
     .branch_taken(branch_taken),
-    .jump(jump)
+    .jump(jump),
+    .jump_reg(jump_reg)
 );
 
 /* Sign-extended immidiate value */
 wire [31:0]imm32;
+
+/* Sign-extended immidiate value divided by 4 for jumps and branches */
+wire [31:0]imm32_div_4 = imm32 >> 2;
 
 /* Sign-extension unit */
 sign_ext sign_ext(.imm(imm12), .ext_imm(imm32));
@@ -140,12 +141,7 @@ wire [31:0]rf_rdata1;
  * For now, all instructions write their 
  * result back to register file 
  */
-reg [31:0]rf_wdata;
-initial rf_wdata = alu_result;
-
-always @(posedge clk) begin
-    rf_wdata = (jump)? pc + 1 : alu_result;
-end
+wire [31:0]rf_wdata = (jump)? pc + 1 : alu_result;
 
 wire [4:0]rf_waddr = rd;
 
