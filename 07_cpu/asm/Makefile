@@ -33,7 +33,7 @@ $(BUILD_DIR)/%.S.o: $(SRC_DIR)/%.S
 	$(AS) -march=rv32i -mabi=ilp32 -c $(^) -o $(@)
 
 $(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
-	$(GCC) -nostdlib -fomit-frame-pointer -O0 -march=rv32i -mabi=ilp32 -c $(^) -o $(@)
+	$(GCC) -nostdlib -fomit-frame-pointer -O1 -march=rv32i -mabi=ilp32 -c $(^) -o $(@)
 
 .PHONY: clean
 .PRECIOUS: $(BUILD_DIR)/%.o %.out %.bin

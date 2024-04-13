@@ -28,8 +28,11 @@ module control(
     /* Halt, stop processor (ebreak opcode actually) */
     output reg halt,
 
-    /* Current branch is taken */
-    output reg branch_taken
+    /* Current instruction is branch and it is taken */
+    output reg branch_taken,
+
+    /* Current instruction is jump */
+    output reg jump
 );
 
 /* Extract fields from instruction code */
@@ -46,8 +49,9 @@ wire [2:0]funct3 = instr[14:12];
 
 always @(*) begin
     
-    rf_we  = 1'b0;
-    mem_we = 1'b0;
+    rf_we        = 1'b0;
+    mem_we       = 1'b0;
+    jump         = 1'b0;
     branch_taken = 1'b0;
     
     imm12  = 12'b0;    
@@ -94,8 +98,29 @@ always @(*) begin
 
         end
 
-        /* Unknown instruction, halt */
-        default: halt = 1'b1;
+        /* J-type */
+
+        7'b1101111: begin // JAL
+            imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0};
+            rf_we = 1'b1;
+            alu_imm = 1'b0;
+            jump  = 1'b1;
+        end
+
+        7'b1100111: begin // JALR
+            imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0}; 
+            rf_we = 1'b1;
+            alu_imm = 1'b0;
+            jump  = 1'b1;
+        end
+
+        /* ebreak */
+        7'b1110011: begin
+            halt = 1'b1;
+        end
+
+        /* Unknown instruction */
+        default: ;
 
     endcase
 end

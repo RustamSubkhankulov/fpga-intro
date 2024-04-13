@@ -23,7 +23,7 @@ reg [31:0]pc = 32'hFFFFFFFF;
 wire branch_taken;
 
 /* Branch target address */
-reg [31:0]pc_target;
+reg [31:0]pc_target = 0;
 
 /* Next program counter value */
 wire [31:0]pc_next = (pc == last_pc) ? pc : pc_target;
@@ -33,7 +33,20 @@ wire halt;
 
 always @(posedge clk) begin
     
-    pc_target = (branch_taken)? pc + imm32 : pc + 1;
+    if (branch_taken) 
+        pc_target = pc + (imm32 >> 2);
+
+    else if (jump) begin
+        if (alu_funct3 == 0) begin
+            pc_target = (rf_rdata0 + imm32) >> 2;
+        end 
+        else begin
+            pc_target = pc + (imm32 >> 2);
+        end
+    end 
+    else begin
+        pc_target = pc + 1;
+    end
 
     /* Step to next instruction */
     if (!halt) begin
@@ -46,7 +59,7 @@ always @(posedge clk) begin
 
 end
 
-/* Next insutrction address is next PC value */
+/* Next instruction address is next PC value */
 assign instr_addr = pc_next;
 
 /* Register destination */
@@ -79,6 +92,9 @@ wire mem_we;
 /* Access width for memory control unit */
 wire [1:0]mem_access_width;
 
+/* Current instruction is jump */
+wire jump;
+
 /* 
  * Control unit 
  * Based on current instruction,
@@ -94,7 +110,8 @@ control control(
     .alu_imm(alu_imm), .alu_funct3(alu_funct3), .alu_funct7(alu_funct7),
     .mem_we(mem_we), .mem_access_width(mem_access_width),
     .halt(halt),
-    .branch_taken(branch_taken)
+    .branch_taken(branch_taken),
+    .jump(jump)
 );
 
 /* Sign-extended immidiate value */
@@ -123,7 +140,13 @@ wire [31:0]rf_rdata1;
  * For now, all instructions write their 
  * result back to register file 
  */
-wire [31:0]rf_wdata = alu_result;
+reg [31:0]rf_wdata;
+initial rf_wdata = alu_result;
+
+always @(posedge clk) begin
+    rf_wdata = (jump)? pc + 1 : alu_result;
+end
+
 wire [4:0]rf_waddr = rd;
 
 /* Write enable signal for register file */

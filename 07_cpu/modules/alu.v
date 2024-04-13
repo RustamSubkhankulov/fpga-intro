@@ -26,6 +26,8 @@ reg [31:0]source1  = 0;
 reg signed [31:0]source2_signed = 0;
 reg [31:0]source2  = 0;
 
+initial res = 0;
+
 always @(*) begin    
     
     source1_signed = reg_source1;
