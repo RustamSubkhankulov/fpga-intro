@@ -42,7 +42,7 @@ generate
     end
 
     /* Assign x[i] to corresponding reg */
-    for (i = 1; i <= 32; i = i + 1) begin
+    for (i = 1; i <= 31; i = i + 1) begin
         assign x[i] = registers[i-1];
     end
 

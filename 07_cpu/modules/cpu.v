@@ -17,7 +17,7 @@ wire [31:0]instr_data;
  */
 rom #(.ADDR_WIDTH(7), .DATA_WIDTH(32)) rom(
     .clk(clk), 
-    .addr(instr_addr[2:0]), 
+    .addr(instr_addr[6:0]), 
     .q(instr_data)
 );
 

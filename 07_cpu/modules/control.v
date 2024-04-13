@@ -3,6 +3,9 @@ module control(
     /* Current instruction encoding */
     input wire [31:0]instr,
 
+    /* ALU result */
+    input wire [31:0]alu_result,
+
     /* Immediate field encoded in instruction */
     output reg [11:0]imm12,
     
@@ -23,7 +26,10 @@ module control(
     output wire [1:0]mem_access_width,
 
     /* Halt, stop processor (ebreak opcode actually) */
-    output reg halt
+    output reg halt,
+
+    /* Current branch is taken */
+    output reg branch_taken
 );
 
 /* Extract fields from instruction code */
@@ -36,14 +42,17 @@ initial begin
     halt = 1'b0;
 end
 
+wire [2:0]funct3 = instr[14:12];
+
 always @(*) begin
     
     rf_we  = 1'b0;
     mem_we = 1'b0;
+    branch_taken = 1'b0;
     
     imm12  = 12'b0;    
-    alu_funct3 <= instr[14:12];
-    alu_funct7 <= instr[31:25];
+    alu_funct3 = instr[14:12];
+    alu_funct7 = instr[31:25];
 
     case (opcode)
 
@@ -65,16 +74,28 @@ always @(*) begin
             imm12 = {instr[31:25],instr[11:7]};
             alu_imm = 1'b1;
             mem_we  = 1'b1;
-            alu_funct3 <= 3'b0; // ADDI to ALU
-            alu_funct7 <= 7'b0;
+            alu_funct3 = 3'b0; // ADDI to ALU
+            alu_funct7 = 7'b0;
         end
 
-        /* ebreak */
-        7'b1110011: begin
-            halt = 1'b1;
+        /* B-type */
+        7'b1100011: begin
+            imm12 = {instr[31],instr[7],instr[30:25],instr[11:8],1'b0};
+            alu_imm = 1'b0;
+            alu_funct3 = 3'b100; // XOR to ALU
+            
+            case (funct3)
+                3'b000: branch_taken = (alu_result == 0);
+                3'b001: branch_taken = (alu_result != 0);
+                
+                /* Unknown instruction, halt */
+                default: halt = 1'b1;
+            endcase
+
         end
 
-        default: ;
+        /* Unknown instruction, halt */
+        default: halt = 1'b1;
 
     endcase
 end

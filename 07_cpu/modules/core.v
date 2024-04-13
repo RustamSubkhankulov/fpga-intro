@@ -19,20 +19,28 @@ reg [31:0]instr = 32'h13; // NOP initially
 /* Program counter register */
 reg [31:0]pc = 32'hFFFFFFFF;
 
+/* Current branch is taken */
+wire branch_taken;
+
+/* Branch target address */
+reg [31:0]pc_target;
+
 /* Next program counter value */
-wire [31:0]pc_next = (pc == last_pc) ? pc : pc + 1;
+wire [31:0]pc_next = (pc == last_pc) ? pc : pc_target;
 
 /* Halt signal to stop the processor */
 wire halt;
 
 always @(posedge clk) begin
     
+    pc_target = (branch_taken)? pc + imm32 : pc + 1;
+
     /* Step to next instruction */
     if (!halt) begin
         pc = pc_next;
         instr = instr_data;
     end else
-        instr = 32'h13;
+        instr = 32'h13; // NOP
 
     // $strobe("CPUv1: [%h] %h \n", pc, instr);
 
@@ -80,11 +88,13 @@ wire [1:0]mem_access_width;
  */
 control control(
     .instr(instr),
+    .alu_result(alu_result),
     .imm12(imm12),
     .rf_we(rf_we),
     .alu_imm(alu_imm), .alu_funct3(alu_funct3), .alu_funct7(alu_funct7),
     .mem_we(mem_we), .mem_access_width(mem_access_width),
-    .halt(halt)
+    .halt(halt),
+    .branch_taken(branch_taken)
 );
 
 /* Sign-extended immidiate value */
