@@ -6,8 +6,8 @@ module control(
     /* ALU result */
     input wire [31:0]alu_result,
 
-    /* Immediate field encoded in instruction */
-    output reg [11:0]imm12,
+    /* Immediate field type encoded in instruction */
+    output reg [1:0]imm_type,
     
     /* Register file Write Enable */
     output reg rf_we,
@@ -59,7 +59,7 @@ always @(instr) begin
     jump_reg     = 1'b0;
     branch_taken = 1'b0;
     
-    imm12      = 12'b0;    
+    imm_type   = 2'h0;    
     alu_funct3 = instr[14:12];
     alu_funct7 = instr[31:25];
 
@@ -68,7 +68,7 @@ always @(instr) begin
         /* I-type */
         7'b0010011: begin
             rf_we   = 1'b1;
-            imm12   = instr[31:20];
+            imm_type   = 2'h0;
             alu_imm = 1'b1;
         end
 
@@ -80,16 +80,16 @@ always @(instr) begin
 
         /* S-type */
         7'b0100011: begin
-            imm12 = {instr[31:25],instr[11:7]};
-            alu_imm = 1'b1;
-            mem_we  = 1'b1;
+            imm_type = 2'h1;
+            alu_imm  = 1'b1;
+            mem_we   = 1'b1;
             alu_funct3 = 3'b0; // ADDI to ALU
             alu_funct7 = 7'b0;
         end
 
         /* B-type */
         7'b1100011: begin
-            imm12 = {instr[31],instr[7],instr[30:25],instr[11:8],1'b0};
+            imm_type = 2'h2;
             alu_imm = 1'b0;
             alu_funct3 = 3'b100; // XOR to ALU
             
@@ -106,14 +106,14 @@ always @(instr) begin
         /* J-type */
 
         7'b1101111: begin // JAL
-            imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0};
+            imm_type = 3'h3;
             rf_we   = 1'b1;
             alu_imm = 1'b0;
             jump    = 1'b1;
         end
 
         7'b1100111: begin // JALR
-            imm12 = {instr[31],instr[19:12],instr[20],instr[30:21], 1'b0}; 
+            imm_type = 3'h3; 
             rf_we    = 1'b1;
             alu_imm  = 1'b0;
             jump_reg = 1'b1;

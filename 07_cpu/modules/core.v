@@ -73,8 +73,8 @@ wire [4:0]rf_raddr1 = rs2;
 /* ALU immediate source operand flag */
 wire alu_imm;
 
-/* 12-bit wide immediate from instruction encoding */
-wire [11:0]imm12;
+/* Immediate field type encoded in instruction */
+wire [1:0]imm_type;
 
 /* ALU operaion encoding */
 wire [2:0]alu_funct3;
@@ -95,14 +95,14 @@ wire jump_reg;
 /* 
  * Control unit 
  * Based on current instruction,
- * returns imm12, WE control signal
+ * returns imm_type, WE control signal
  * for register file and ALU operation
  * encoding
  */
 control control(
     .instr(instr),
     .alu_result(alu_result),
-    .imm12(imm12),
+    .imm_type(imm_type),
     .rf_we(rf_we),
     .alu_imm(alu_imm), .alu_funct3(alu_funct3), .alu_funct7(alu_funct7),
     .mem_we(mem_we), .mem_access_width(mem_access_width),
@@ -118,8 +118,8 @@ wire [31:0]imm32;
 /* Sign-extended immidiate value divided by 4 for jumps and branches */
 wire [31:0]imm32_div_4 = imm32 >> 2;
 
-/* Sign-extension unit */
-sign_ext sign_ext(.imm(imm12), .ext_imm(imm32));
+/* Immediate arg control unit */
+imm imm(.instr(instr), .imm_type(imm_type), .imm32(imm32));
 
 /* ALU result */
 wire [31:0]alu_result;
