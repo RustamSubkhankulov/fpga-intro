@@ -19,3 +19,5 @@ sudo apt install gtkwave
 
 #### Сборка и симуляция
 Чтобы воспользоваться симулятором, достаточно использовать команду <code>make test</code> в директории с каким-либо из проектов. Данная команда проводит сначала компиляцию кода при помощи **iverilog**, а далее открывает дамп сигналов при помощи **gtkwave**.
+
+![GTKWave](https://github.com/RustamSubkhankulov/fpga-intro/blob/main/pics/gtkwave.png)
