@@ -1,4 +1,6 @@
 *.executable
 *.vcd
+*.bin
+*.out
 build/
 .DS_Store/
