@@ -49,7 +49,8 @@ clock_div #(.X(CLK_FREQ / BAUDRATE)) clk_div(
 
 always @(posedge clk) begin
     
-    /* We start if: 
+    /* 
+     * We start if: 
      * - start == 1: input signal indicating there is data to transmit 
      * - idle == 1: transmitter is not busy
      */
@@ -69,7 +70,7 @@ always @(posedge clk) begin
     end else 
 
         /* No need to reset */
-        reset <= 0;
+        reset <= 1'b0;
 end
 
 always @(posedge clk_divided) begin
