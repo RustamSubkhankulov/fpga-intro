@@ -6,8 +6,8 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
     /* Start transmission signal */
     input wire start,
     
-    /* Input data to be transmitted */
-    input wire [DATA_WIDTH - 1:0]data,
+    /* Input data */
+    input wire [DATA_WIDTH - 1:0]transmit_data,
     
     /* TX line */
     output reg line = 1'b1,
@@ -15,6 +15,12 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
     /* Transmitter ready to work */
     output wire ready
 );
+
+/* 
+ * Data read from input that 
+ * is saved for transmission 
+ */
+reg [DATA_WIDTH - 1:0]data = 0;
 
 /* 
  * Current bit number in data
@@ -49,8 +55,11 @@ always @(posedge clk) begin
      */
     if (start && idle) begin 
         
+        /* Save up data */
+        data <= transmit_data;
+
         /* Reset divider counter */
-        reset <= 1;
+        reset <= 1'b1;
         
         /* Start from the 0 bit of bata*/
         bit_num <= 4'h0;

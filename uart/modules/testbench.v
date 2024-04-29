@@ -14,9 +14,6 @@ parameter ADDR_WIDTH = 5;
 /* ROM data element size ib bits */
 parameter DATA_WIDTH = 8;
 
-/* Total time of test */
-parameter TEST_TIME = (2**ADDR_WIDTH - 1) * (CLK_FREQ / BAUDRATE);
-
 /* Represents clock, initial value is 0 */
 reg clk = 1'b0;
 
@@ -30,13 +27,12 @@ end
 wire [ADDR_WIDTH - 1:0]addr;
 
 /* Data fetched from rom */
-wire [DATA_WIDTH - 1:0]data;
+wire [DATA_WIDTH - 1:0]transmit_data;
 
 /* Read-Only Memory fetcher */
 rom_fetcher #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) rom_fetcher(
     .clk(clk),
-    // .next(uart_tx_start), 
-    .next(1'b0), 
+    .next(uart_tx_start), 
     .addr(addr)
 );
 
@@ -44,7 +40,7 @@ rom_fetcher #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) rom_fetcher(
 rom #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) rom(
     .clk(clk), 
     .addr(addr),
-    .data(data)
+    .data(transmit_data)
 );
 
 /* UART transmitter start signal */
@@ -60,7 +56,7 @@ wire uart_tx_ready;
 uart_tx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uart_tx(
     .clk(clk), 
     .start(uart_tx_start), 
-    .data(data),
+    .transmit_data(transmit_data),
     .line(uart_tx_line),
     .ready(uart_tx_ready)
 );
@@ -84,7 +80,7 @@ initial begin
     $display("Test started...");
     
     /* Stop simulation when all ROM contents are fetched*/
-    #TEST_TIME $finish;
+    #1024 $finish;
 end
 
 endmodule
