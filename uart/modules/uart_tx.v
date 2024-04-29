@@ -18,7 +18,7 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
 
 /* 
  * Data read from input that 
- * is saved for transmission 
+ * is saved for transmission
  */
 reg [DATA_WIDTH - 1:0]data = 0;
 
@@ -74,28 +74,8 @@ end
 
 always @(posedge clk_divided) begin
     
-    case (bit_num)
-
-        /* Transmit next bit */
-        4'h0: begin bit_num <= 4'h1; line <= data[0]; end
-        4'h1: begin bit_num <= 4'h2; line <= data[1]; end
-        4'h2: begin bit_num <= 4'h3; line <= data[2]; end
-        4'h3: begin bit_num <= 4'h4; line <= data[3]; end
-        4'h4: begin bit_num <= 4'h5; line <= data[4]; end
-        4'h5: begin bit_num <= 4'h6; line <= data[5]; end
-        4'h6: begin bit_num <= 4'h7; line <= data[6]; end
-        4'h7: begin bit_num <= 4'h8; line <= data[7]; end
-
-        /* Stop bit */
-        4'h8: begin bit_num <= 4'h9; line <= 1'b1;    end
-        
-        /* Idle state */
-        default: begin bit_num <= 4'hF; end
-    
-    endcase
-
-    /* line <= data[bit_num]; */
-    /* bit_num <= (bit_num == 4'h9)? 4'hF : bit_num + 4'h1; */
+    line <= (bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
+    bit_num <= (bit_num == 4'h9)? 4'hF : bit_num + 4'h1;
 end
 
 endmodule
