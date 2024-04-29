@@ -3,7 +3,7 @@
 module testbench();
 
 /* Clock frequency */
-parameter CLK_FREQ = 19200;
+parameter CLK_FREQ = 38400;
 
 /* UART baudrate */
 parameter BAUDRATE = 9600;
@@ -80,7 +80,7 @@ initial begin
     $display("Test started...");
     
     /* Stop simulation when all ROM contents are fetched*/
-    #1024 $finish;
+    #2048 $finish;
 end
 
 endmodule

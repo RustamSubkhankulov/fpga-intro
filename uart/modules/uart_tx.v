@@ -26,16 +26,16 @@ reg [DATA_WIDTH - 1:0]data = 0;
  * Current bit number in data
  * (initially in idle state) 
  */
-reg [3:0]bit_num = 4'hF;
+reg [3:0]bit_num = DATA_WIDTH + 2;
 
 /* Transmitter ready to work */
-assign ready = !start && (bit_num == 4'hF);
+assign ready = !start && idle;
 
 /* 
  * Boolean flag indicating that 
  * the transmitter is in idle state 
  */
-wire idle = (bit_num == 4'hF);
+wire idle = (bit_num == DATA_WIDTH + 2);
 
 /* Reset signal for divider */
 reg reset = 0;
@@ -75,7 +75,7 @@ end
 always @(posedge clk_divided) begin
     
     line <= (bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
-    bit_num <= (bit_num == 4'h9)? 4'hF : bit_num + 4'h1;
+    bit_num <= (bit_num == DATA_WIDTH + 2)? bit_num : bit_num + 4'h1;
 end
 
 endmodule
