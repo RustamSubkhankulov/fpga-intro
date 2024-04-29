@@ -29,7 +29,7 @@ reg [DATA_WIDTH - 1:0]data = 0;
 reg [3:0]bit_num = DATA_WIDTH + 2;
 
 /* Transmitter ready to work */
-assign ready = !start && idle;
+assign ready = idle;
 
 /* 
  * Boolean flag indicating that 
