@@ -3,7 +3,7 @@
 module testbench();
 
 /* Clock frequency */
-parameter CLK_FREQ = 38400;
+parameter CLK_FREQ = 76800;
 
 /* UART baudrate */
 parameter BAUDRATE = 9600;
@@ -13,6 +13,9 @@ parameter ADDR_WIDTH = 5;
 
 /* ROM data element size ib bits */
 parameter DATA_WIDTH = 8;
+
+/* Stop bit size */
+parameter STOP_BIT_SIZE = 1.5;
 
 /* Represents clock, initial value is 0 */
 reg clk = 1'b0;
@@ -56,7 +59,12 @@ wire uart_tx_ready;
 wire uart_rx_ready;
 
 /* UART transmitter */
-uart_tx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uart_tx(
+uart_tx #(
+    .CLK_FREQ(CLK_FREQ), 
+    .BAUDRATE(BAUDRATE), 
+    .DATA_WIDTH(DATA_WIDTH), 
+    .STOP_BIT_SIZE(STOP_BIT_SIZE)) 
+uart_tx(
     .clk(clk), 
     .start(uart_tx_ready && transmit_data != 0), 
     .transmit_data(transmit_data),
@@ -65,7 +73,12 @@ uart_tx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uar
 );
 
 /* UART receiver */
-uart_rx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uart_rx(
+uart_rx #(
+    .CLK_FREQ(CLK_FREQ), 
+    .BAUDRATE(BAUDRATE), 
+    .DATA_WIDTH(DATA_WIDTH), 
+    .STOP_BIT_SIZE(STOP_BIT_SIZE))
+uart_rx(
     .clk(clk), 
     .line(uart_tx_line),
     .receive_data(receive_data),
@@ -96,7 +109,7 @@ initial begin
     $display("Test started...");
     
     /* Stop simulation when all ROM contents are fetched*/
-    #2048 $finish;
+    #4096 $finish;
 end
 
 endmodule

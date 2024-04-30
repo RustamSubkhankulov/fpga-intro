@@ -1,5 +1,9 @@
-module uart_rx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, parameter DATA_WIDTH = 8) (
-
+module uart_rx #(
+    parameter CLK_FREQ = 50000000, 
+    parameter BAUDRATE = 9600, 
+    parameter DATA_WIDTH = 8, 
+    parameter STOP_BIT_SIZE = 1)
+(
     /* Clocking signal */
     input wire clk,
     
@@ -20,7 +24,7 @@ reg [DATA_WIDTH - 1:0]data = 0;
  * Current bit number in data
  * (initially in idle state) 
  */
-reg [3:0]bit_num = 4'hF;
+reg [3:0]bit_num = DATA_WIDTH + 2;
 
 /* Clock divider */
 clock_div #(.X(CLK_FREQ / BAUDRATE)) clk_div(
@@ -50,7 +54,7 @@ always @(posedge clk) begin
         bit_num <= 4'h0;
     end
 
-    if (!ready && active && bit_num == DATA_WIDTH + 1) begin
+    if (!ready && active && bit_num == DATA_WIDTH + 2) begin
 
         /* Set ready flag if we just read stop bit */
         ready <= 1'b1;
@@ -75,7 +79,7 @@ always @(posedge clk_divided) begin
             data[bit_num - 1] <= line;
 
         /* Iterate to next bit */
-        bit_num <= (bit_num == DATA_WIDTH + 1)? bit_num : bit_num + 1'b1;
+        bit_num <= (bit_num == DATA_WIDTH + 2)? bit_num : bit_num + 1'b1;
     end
 end
 

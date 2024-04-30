@@ -21,11 +21,16 @@
 - CLK_FREQ - частота тактирования сигнала **clk**
 - BAUDRATE - скорость bits per second
 - DATA_WIDTH - размер посылки в битах 
+- STOP_BIT_SIZE - размер бита - 1, 1.5 или 2
 
 ## UART TX
 ```
-module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, parameter DATA_WIDTH = 8) (
-
+module uart_tx #(
+    parameter CLK_FREQ = 50000000, 
+    parameter BAUDRATE = 9600, 
+    parameter DATA_WIDTH = 8, 
+    parameter STOP_BIT_SIZE = 1) 
+(
     /* Clocking signal */
     input wire clk,
 
@@ -51,8 +56,12 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
 
 ## UART RX
 ```
-module uart_rx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, parameter DATA_WIDTH = 8) (
-
+module uart_rx #(
+    parameter CLK_FREQ = 50000000, 
+    parameter BAUDRATE = 9600, 
+    parameter DATA_WIDTH = 8, 
+    parameter STOP_BIT_SIZE = 1)
+(
     /* Clocking signal */
     input wire clk,
     
