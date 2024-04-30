@@ -17,12 +17,6 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
 );
 
 /* 
- * Initial state: we need to hold 
- * 1 at tx line at least for one cycle
- */
-reg init = 1'b1;
-
-/* 
  * Data read from input that 
  * is saved for transmission
  */
@@ -32,7 +26,7 @@ reg [DATA_WIDTH - 1:0]data = 0;
 reg [3:0]bit_num = DATA_WIDTH + 2;
 
 /* Transmitter ready to work */
-assign ready = !init && (bit_num == DATA_WIDTH + 2);
+assign ready = bit_num == DATA_WIDTH + 2;
 
 /* Reset signal for divider */
 reg reset = 0;
@@ -72,9 +66,7 @@ end
 
 always @(posedge clk_divided) begin
     
-    init <= 1'b0;
-
-    line <= (!init && bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
+    line <= (bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
     bit_num <= (bit_num == DATA_WIDTH + 2)? bit_num : bit_num + 4'h1;
 end
 
