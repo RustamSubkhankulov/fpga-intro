@@ -58,7 +58,7 @@ wire uart_rx_ready;
 /* UART transmitter */
 uart_tx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uart_tx(
     .clk(clk), 
-    .start(uart_tx_ready), 
+    .start(uart_tx_ready && transmit_data != 0), 
     .transmit_data(transmit_data),
     .line(uart_tx_line),
     .ready(uart_tx_ready)
@@ -72,8 +72,23 @@ uart_rx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uar
     .ready(uart_rx_ready)
 );
 
+/* Counter of received bytes of data and copy of received data  */
+reg [2**ADDR_WIDTH - 1: 0] recv_ct = 0;
+reg [DATA_WIDTH - 1:0]recv_data = 0;
+
+always @(posedge clk) begin
+    
+    /* Increment counter of received data whenever rx is ready */
+    recv_ct <= recv_ct + (uart_rx_ready);
+
+    /* Copy received data to reg */
+    recv_data <= receive_data;
+end
+
 initial begin
     
+    $monitor("[$monitor] recv_data[%02d]=0x%0h (%0c)", recv_ct, recv_data, recv_data);
+
     /* Open for dump of signals */
     $dumpvars;
     

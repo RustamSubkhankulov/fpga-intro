@@ -7,17 +7,14 @@ module uart_rx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
     input wire line,
 
     /* Output data */
-    output wire [DATA_WIDTH - 1:0]receive_data,
+    output reg [DATA_WIDTH - 1:0]receive_data = 0,
 
     /* Receiver got value */
     output reg ready = 1'b0
 );
 
-/* Data received from the line */
+/* Temp storage for data received from the line */
 reg [DATA_WIDTH - 1:0]data = 0;
-
-/* Output is 0 whenever it is not ready yet */
-assign receive_data = (ready)? data : 0;
 
 /* 
  * Current bit number in data
@@ -57,6 +54,9 @@ always @(posedge clk) begin
 
         /* Set ready flag if we just read stop bit */
         ready <= 1'b1;
+
+        /* Output read received data */
+        receive_data <= data;
 
         /* Go to idle state */
         active <= 1'b0;
