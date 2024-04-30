@@ -20,14 +20,16 @@ module uart_rx #(
 /* Temp storage for data received from the line */
 reg [DATA_WIDTH - 1:0]data = 0;
 
+`define IDLE_BIT_NUM 2 * (DATA_WIDTH + 1 + STOP_BIT_SIZE)
+
 /* 
  * Current bit number in data
  * (initially in idle state) 
  */
-reg [3:0]bit_num = DATA_WIDTH + 2;
+reg [$clog2(`IDLE_BIT_NUM):0]bit_num = `IDLE_BIT_NUM;
 
 /* Clock divider */
-clock_div #(.X(CLK_FREQ / BAUDRATE)) clk_div(
+clock_div #(.X(CLK_FREQ / (2 * BAUDRATE))) clk_div(
     .clk(clk), 
     .clk_divided(clk_divided),
     .reset(!active && prev && !line)
@@ -54,7 +56,7 @@ always @(posedge clk) begin
         bit_num <= 4'h0;
     end
 
-    if (!ready && active && bit_num == DATA_WIDTH + 2) begin
+    if (!ready && active && bit_num == `IDLE_BIT_NUM) begin
 
         /* Set ready flag if we just read stop bit */
         ready <= 1'b1;
@@ -75,11 +77,11 @@ always @(posedge clk_divided) begin
     if (active) begin
         
         /* Read next bit of data */    
-        if (bit_num && bit_num < DATA_WIDTH + 1)
-            data[bit_num - 1] <= line;
+        if (bit_num > 1 && bit_num < 2 * (DATA_WIDTH + 1))
+            data[(bit_num - 1) >> 1] <= line;
 
         /* Iterate to next bit */
-        bit_num <= (bit_num == DATA_WIDTH + 2)? bit_num : bit_num + 1'b1;
+        bit_num <= (bit_num == `IDLE_BIT_NUM)? bit_num : bit_num + 1'b1;
     end
 end
 
