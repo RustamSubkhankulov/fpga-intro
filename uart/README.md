@@ -98,7 +98,7 @@ module uart_rx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
 
 Пример временной диаграммы сигналов в **gtkwave**:
 
-<img src="pics/sigs.png" alt="Signals" width="500">
+<img src="pics/sigs.png" alt="Signals" width="800">
 
 - addr[4:0]: адрес отправляемого байта данных
 - transmit_data[7:0]: данные, которые будут приняты tx модулем для отправки в момент проставления флага start
