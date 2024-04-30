@@ -17,25 +17,22 @@ module uart_tx #(parameter CLK_FREQ = 50000000, parameter BAUDRATE = 9600, param
 );
 
 /* 
+ * Initial state: we need to hold 
+ * 1 at tx line at least for one cycle
+ */
+reg init = 1'b1;
+
+/* 
  * Data read from input that 
  * is saved for transmission
  */
 reg [DATA_WIDTH - 1:0]data = 0;
 
-/* 
- * Current bit number in data
- * (initially in idle state) 
- */
+/* Current bit number in data */
 reg [3:0]bit_num = DATA_WIDTH + 2;
 
 /* Transmitter ready to work */
-assign ready = idle;
-
-/* 
- * Boolean flag indicating that 
- * the transmitter is in idle state 
- */
-wire idle = (bit_num == DATA_WIDTH + 2);
+assign ready = !init && (bit_num == DATA_WIDTH + 2);
 
 /* Reset signal for divider */
 reg reset = 0;
@@ -52,9 +49,9 @@ always @(posedge clk) begin
     /* 
      * We start if: 
      * - start == 1: input signal indicating there is data to transmit 
-     * - idle == 1: transmitter is not busy
+     * - ready == 1: transmitter is not busy
      */
-    if (start && idle) begin 
+    if (start && ready) begin 
         
         /* Save up data */
         data <= transmit_data;
@@ -75,7 +72,9 @@ end
 
 always @(posedge clk_divided) begin
     
-    line <= (bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
+    init <= 1'b0;
+
+    line <= (!init && bit_num <  DATA_WIDTH)? data[bit_num] : 1'b1;
     bit_num <= (bit_num == DATA_WIDTH + 2)? bit_num : bit_num + 4'h1;
 end
 

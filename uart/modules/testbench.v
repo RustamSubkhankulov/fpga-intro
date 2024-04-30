@@ -67,7 +67,7 @@ uart_tx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uar
 /* UART receiver */
 uart_rx #(.CLK_FREQ(CLK_FREQ), .BAUDRATE(BAUDRATE), .DATA_WIDTH(DATA_WIDTH)) uart_rx(
     .clk(clk), 
-    .line(line),
+    .line(uart_tx_line),
     .receive_data(receive_data),
     .ready(uart_rx_ready)
 );

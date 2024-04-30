@@ -25,14 +25,11 @@ assign receive_data = (ready)? data : 0;
  */
 reg [3:0]bit_num = 4'hF;
 
-/* Reset signal for divider */
-reg reset = 0;
-
 /* Clock divider */
 clock_div #(.X(CLK_FREQ / BAUDRATE)) clk_div(
     .clk(clk), 
     .clk_divided(clk_divided),
-    .reset(reset)
+    .reset(!active && prev && !line)
 );
 
 /* 
@@ -52,27 +49,21 @@ always @(posedge clk) begin
         /* Go to active state */
         active <= 1'b1;
 
-        /* Reset divider counter */
-        reset <= 1'b1;
-
         /* Start from the 0 bit of data */
         bit_num <= 4'h0;
+    end
 
-    end else 
-
-        /* No need to reset */
-        reset <= 1'b0;
-
-    if (bit_num == DATA_WIDTH + 1) begin
+    if (!ready && active && bit_num == DATA_WIDTH + 1) begin
 
         /* Set ready flag if we just read stop bit */
         ready <= 1'b1;
 
         /* Go to idle state */
         active <= 1'b0;
-
     end else 
         ready <= 1'b0;
+
+    prev <= line;
 end
 
 always @(posedge clk_divided) begin
@@ -80,14 +71,12 @@ always @(posedge clk_divided) begin
     if (active) begin
         
         /* Read next bit of data */    
-        if (bit_num < DATA_WIDTH)
-            data[bit_num] <= line;
+        if (bit_num && bit_num < DATA_WIDTH + 1)
+            data[bit_num - 1] <= line;
 
         /* Iterate to next bit */
         bit_num <= (bit_num == DATA_WIDTH + 1)? bit_num : bit_num + 1'b1;
     end
-
-    prev <= line;
 end
 
 endmodule
